@@ -25,7 +25,7 @@ export function Sidebar({
       backdropFilter: "blur(10px)",
       borderLeft: "1px solid rgba(255,255,255,0.1)",
       display: "flex",
-      flexDirection: "column",
+      flexDirection: "row", // Change to row to separate icon bar from content
       transition: "all 0.3s ease",
       position: window.innerWidth < 768 ? "absolute" : "relative",
       right: 0,
@@ -34,48 +34,117 @@ export function Sidebar({
       zIndex: 1000,
       boxShadow: sidebarOpen ? "-10px 0 30px rgba(0,0,0,0.5)" : "none",
     }}>
-      {/* Inner Content Wrapper - Hides content when sidebar is closed */}
+      
+      {/* 40px Vertical Strip (Always visible) */}
       <div style={{
-        width: "320px",
-        flex: 1,
+        width: "40px",
+        minWidth: "40px",
+        display: "flex",
+        flexDirection: "column",
+        alignItems: "center",
+        paddingTop: "10px",
+        borderRight: sidebarOpen ? "1px solid rgba(255,255,255,0.06)" : "none",
+        background: "rgba(0,0,0,0.2)",
+      }}>
+        {[
+          { id: "situations", icon: "🗺️", title: "상황" },
+          { id: "feedback",   icon: "💡", title: "피드백" },
+          { id: "goals",      icon: "🎯", title: "목표" },
+          { id: "progress",   icon: "📊", title: "진행" },
+        ].map(tab => (
+          <button
+            key={tab.id}
+            onClick={() => {
+              setActiveTab(tab.id);
+              if (!sidebarOpen) setSidebarOpen(true);
+            }}
+            title={tab.title}
+            style={{
+              width: "32px",
+              height: "32px",
+              marginBottom: "8px",
+              background: activeTab === tab.id ? "rgba(167,139,250,0.25)" : "transparent",
+              border: activeTab === tab.id ? "1px solid rgba(167,139,250,0.5)" : "1px solid transparent",
+              borderRadius: "8px",
+              color: "#fff",
+              cursor: "pointer",
+              fontSize: "16px",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              transition: "all 0.2s",
+            }}
+          >
+            {tab.icon}
+          </button>
+        ))}
+
+        {/* Sidebar Toggle Button at the Bottom of the strip */}
+        <button
+          onClick={() => setSidebarOpen(o => !o)}
+          title="메뉴 토글"
+          style={{
+            width: "100%",
+            height: "48px",
+            background: "transparent",
+            border: "none",
+            borderTop: "1px solid rgba(255,255,255,0.06)",
+            cursor: "pointer",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            color: "#a78bfa",
+            transition: "all 0.3s ease",
+            marginTop: "auto",
+            padding: 0
+          }}
+        >
+          <svg 
+            width="20" height="20" viewBox="0 0 24 24" 
+            fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"
+            style={{ transition: "transform 0.3s ease", transform: sidebarOpen ? "rotate(0deg)" : "rotate(90deg)" }}
+          >
+            <line x1="3" y1="12" x2="21" y2="12"></line>
+            <line x1="3" y1="6" x2="21" y2="6"></line>
+            <line x1="3" y1="18" x2="21" y2="18"></line>
+          </svg>
+        </button>
+      </div>
+
+      {/* Inner Content Wrapper - Expanded from 0 to 280px */}
+      <div style={{
+        width: sidebarOpen ? "280px" : "0px", // 320px total - 40px strip
+        flexShrink: 0,
         display: "flex",
         flexDirection: "column",
         opacity: sidebarOpen ? 1 : 0,
         pointerEvents: sidebarOpen ? "auto" : "none",
-        transition: "opacity 0.2s ease",
+        transition: "width 0.3s ease, opacity 0.2s ease",
         overflow: "hidden"
       }}>
-        {/* Tabs */}
-        <div style={{ display: "flex", borderBottom: "1px solid rgba(255,255,255,0.06)" }}>
-        {[
-          { id: "situations", label: "🗺️ 상황" },
-          { id: "feedback",   label: "💡 피드백" },
-          { id: "goals",      label: "🎯 목표" },
-          { id: "progress",   label: "📊 진행" },
-        ].map(tab => (
-          <button key={tab.id} onClick={() => setActiveTab(tab.id)} style={{
-            flex: 1,
-            padding: "11px 3px",
-            background: activeTab === tab.id ? "rgba(167,139,250,0.15)" : "transparent",
-            border: "none",
-            borderBottom: activeTab === tab.id ? "2px solid #a78bfa" : "2px solid transparent",
-            color: activeTab === tab.id ? "#a78bfa" : "#888",
-            cursor: "pointer",
-            fontSize: "10px",
-            fontWeight: activeTab === tab.id ? 600 : 400,
-            transition: "all 0.2s",
-          }}>{tab.label}</button>
-        ))}
-      </div>
+        {/* Header Text for active tab */}
+        <div style={{ 
+          padding: "15px 16px", 
+          borderBottom: "1px solid rgba(255,255,255,0.06)",
+          fontWeight: 700,
+          color: "#e8e8f0",
+          fontSize: "14px",
+          display: "flex",
+          alignItems: "center",
+          gap: "8px"
+        }}>
+          {activeTab === "situations" && "🗺️ 상황별 에피소드"}
+          {activeTab === "feedback" && "💡 실시간 피드백"}
+          {activeTab === "goals" && "🎯 학습 목표"}
+          {activeTab === "progress" && "📊 학습 진행 상황"}
+        </div>
 
-      <div style={{ flex: 1, overflowY: "auto", padding: "16px", display: "flex", flexDirection: "column", gap: "12px", scrollbarWidth: "thin", scrollbarColor: "rgba(167,139,250,0.2) transparent" }}>
-        {/* Situations Tab */}
-        {activeTab === "situations" && (
-          <div>
-            <div style={{ marginBottom: "14px" }}>
-              <div style={{ fontSize: "13px", fontWeight: 700, color: "#a78bfa", marginBottom: "4px" }}>🗺️ 상황별 에피소드</div>
-              <div style={{ fontSize: "11px", color: "#666", lineHeight: "1.5" }}>
-                버튼을 누르면 해당 상황의 기·승·결 대화 에피소드 1개를 {lang.nativeName}로 생성합니다
+              <div style={{ flex: 1, overflowY: "auto", padding: "16px", display: "flex", flexDirection: "column", gap: "12px", scrollbarWidth: "thin", scrollbarColor: "rgba(167,139,250,0.2) transparent" }}>
+              {/* Situations Tab */}
+              {activeTab === "situations" && (
+                <div>
+                  <div style={{ marginBottom: "14px" }}>
+                    <div style={{ fontSize: "11px", color: "#666", lineHeight: "1.5" }}>                버튼을 누르면 해당 상황의 기·승·결 대화 에피소드 1개를 {lang.nativeName}로 생성합니다
               </div>
             </div>
 
@@ -193,7 +262,6 @@ export function Sidebar({
         {activeTab === "goals" && (
           <>
             <div>
-              <h3 style={{ fontSize: "13px", color: "#a78bfa", marginBottom: "10px", fontWeight: 600 }}>🎯 학습 목표</h3>
               {goals.map(goal => (
                 <div key={goal.id} style={{
                   display: "flex",
@@ -337,37 +405,6 @@ export function Sidebar({
         )}
       </div>
       </div>
-
-      {/* Sidebar Toggle Button at the Bottom */}
-      <button
-        onClick={() => setSidebarOpen(o => !o)}
-        title="메뉴 토글"
-        style={{
-          width: "100%",
-          height: "48px",
-          background: "rgba(255,255,255,0.03)",
-          border: "none",
-          borderTop: "1px solid rgba(255,255,255,0.06)",
-          cursor: "pointer",
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center",
-          color: "#a78bfa",
-          transition: "all 0.3s ease",
-          flexShrink: 0,
-          marginTop: "auto"
-        }}
-      >
-        <svg 
-          width="24" height="24" viewBox="0 0 24 24" 
-          fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"
-          style={{ transition: "transform 0.3s ease", transform: sidebarOpen ? "rotate(0deg)" : "rotate(90deg)" }}
-        >
-          <line x1="3" y1="12" x2="21" y2="12"></line>
-          <line x1="3" y1="6" x2="21" y2="6"></line>
-          <line x1="3" y1="18" x2="21" y2="18"></line>
-        </svg>
-      </button>
     </div>
   );
 }
