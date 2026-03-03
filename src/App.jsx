@@ -267,6 +267,19 @@ Do NOT stop mid-dialogue. Complete the full episode before the feedback section.
         />
       )}
 
+      {/* Mobile Overlay for auto-closing sidebar */}
+      {sidebarOpen && window.innerWidth < 768 && (
+        <div
+          onClick={() => setSidebarOpen(false)}
+          style={{
+            position: "fixed",
+            inset: 0,
+            background: "transparent",
+            zIndex: 900, // Below sidebar (1000) but above everything else
+          }}
+        />
+      )}
+
       <div style={{ display: "flex", flex: 1, gap: 0, minHeight: 0, overflow: "hidden" }}>
         <ChatWindow
           messages={messages}
