@@ -43,7 +43,7 @@ export function Header({
         <span style={{ fontWeight: 700, fontSize: "18px", background: "linear-gradient(90deg, #a78bfa, #60a5fa)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent" }}>
           LinguaAI
         </span>
-        <span style={{ fontSize: "10px", color: "rgba(255,255,255,0.4)", fontWeight: 600, background: "rgba(255,255,255,0.1)", padding: "2px 6px", borderRadius: "10px" }}>v1.24</span>
+        <span style={{ fontSize: "10px", color: "rgba(255,255,255,0.4)", fontWeight: 600, background: "rgba(255,255,255,0.1)", padding: "2px 6px", borderRadius: "10px" }}>v1.25</span>
       </div>
 
       {/* Language Selector */}
@@ -91,33 +91,15 @@ export function Header({
                 transition: "background 0.15s",
               }}>
                 {l.flag} {l.name} <span style={{ opacity: 0.5, fontSize: "12px" }}>{l.nativeName}</span>
-              </button>
-            ))}
-          </div>
-        )}
-      </div>
-
-      {/* Level Badge */}
-      <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
-        <span style={{ fontSize: "12px", opacity: 0.6 }}>레벨</span>
-        <span style={{
-          background: LEVEL_COLORS[level],
-          color: "#fff",
-          fontWeight: 700,
-          padding: "4px 12px",
-          borderRadius: "20px",
-          fontSize: "13px",
-          boxShadow: `0 0 12px ${LEVEL_COLORS[level]}66`,
-        }}>{level}</span>
-        <div style={{ width: "80px", height: "4px", background: "rgba(255,255,255,0.1)", borderRadius: "2px", overflow: "hidden" }}>
-          <div style={{ width: `${levelProgress}%`, height: "100%", background: LEVEL_COLORS[level], transition: "width 0.5s" }} />
-        </div>
-      </div>
-
-      {/* Mode Toggle */}
-      <div style={{ marginLeft: "auto", display: "flex", gap: "8px", alignItems: "center" }}>
-        {/* TTS Controls */}
-        <div style={{ position: "relative" }}>
+                              </button>
+                            ))}
+                          </div>
+                        )}
+                      </div>
+              
+                      {/* Mode Toggle */}
+                      <div style={{ marginLeft: "auto", display: "flex", gap: "8px", alignItems: "center" }}>
+                        {/* TTS Controls */}        <div style={{ position: "relative" }}>
           <button
             onClick={() => setShowTtsPanel(p => !p)}
             title="음성 설정"
@@ -302,32 +284,6 @@ export function Header({
           {!apiKeys[aiProvider] && aiProvider !== "claude" && (
             <span style={{ fontSize: "9px", color: "#f87171", background: "rgba(248,113,113,0.1)", padding: "1px 6px", borderRadius: "6px", border: "1px solid rgba(248,113,113,0.3)" }}>키 필요</span>
           )}
-        </button>
-
-        {/* Hamburger Menu Toggle */}
-        <button
-          onClick={() => setSidebarOpen(!sidebarOpen)}
-          title="메뉴 토글"
-          style={{
-            background: sidebarOpen ? "rgba(167,139,250,0.2)" : "rgba(255,255,255,0.07)",
-            border: sidebarOpen ? "1px solid rgba(167,139,250,0.5)" : "1px solid rgba(255,255,255,0.1)",
-            borderRadius: "10px",
-            color: sidebarOpen ? "#a78bfa" : "#e8e8f0",
-            cursor: "pointer",
-            padding: "8px",
-            marginLeft: "4px",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            transition: "all 0.2s",
-            transform: sidebarOpen ? "rotate(90deg)" : "rotate(0deg)"
-          }}
-        >
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-            <line x1="3" y1="12" x2="21" y2="12"></line>
-            <line x1="3" y1="6" x2="21" y2="6"></line>
-            <line x1="3" y1="18" x2="21" y2="18"></line>
-          </svg>
         </button>
       </div>
     </header>

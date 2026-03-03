@@ -19,11 +19,11 @@ export function Sidebar({
 
   return (
     <div style={{
-      width: sidebarOpen ? "320px" : "0px",
-      minWidth: sidebarOpen ? "320px" : "0px",
+      width: sidebarOpen ? "320px" : "40px", // Changed collapsed width to 40px
+      minWidth: sidebarOpen ? "320px" : "40px",
       background: "rgba(15, 12, 41, 0.95)",
       backdropFilter: "blur(10px)",
-      borderLeft: sidebarOpen ? "1px solid rgba(255,255,255,0.1)" : "none",
+      borderLeft: "1px solid rgba(255,255,255,0.1)",
       display: "flex",
       flexDirection: "column",
       transition: "all 0.3s ease",
@@ -33,12 +33,11 @@ export function Sidebar({
       bottom: 0,
       zIndex: 1000,
       boxShadow: sidebarOpen ? "-10px 0 30px rgba(0,0,0,0.5)" : "none",
-      overflow: "visible", // ALLOW BUTTON TO SHOW OUTSIDE
     }}>
       {/* Inner Content Wrapper - Hides content when sidebar is closed */}
       <div style={{
         width: "320px",
-        height: "100%",
+        flex: 1,
         display: "flex",
         flexDirection: "column",
         opacity: sidebarOpen ? 1 : 0,
@@ -338,6 +337,37 @@ export function Sidebar({
         )}
       </div>
       </div>
+
+      {/* Sidebar Toggle Button at the Bottom */}
+      <button
+        onClick={() => setSidebarOpen(o => !o)}
+        title="메뉴 토글"
+        style={{
+          width: "100%",
+          height: "48px",
+          background: "rgba(255,255,255,0.03)",
+          border: "none",
+          borderTop: "1px solid rgba(255,255,255,0.06)",
+          cursor: "pointer",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          color: "#a78bfa",
+          transition: "all 0.3s ease",
+          flexShrink: 0,
+          marginTop: "auto"
+        }}
+      >
+        <svg 
+          width="24" height="24" viewBox="0 0 24 24" 
+          fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"
+          style={{ transition: "transform 0.3s ease", transform: sidebarOpen ? "rotate(0deg)" : "rotate(90deg)" }}
+        >
+          <line x1="3" y1="12" x2="21" y2="12"></line>
+          <line x1="3" y1="6" x2="21" y2="6"></line>
+          <line x1="3" y1="18" x2="21" y2="18"></line>
+        </svg>
+      </button>
     </div>
   );
 }
