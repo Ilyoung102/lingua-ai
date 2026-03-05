@@ -507,32 +507,38 @@ export function Sidebar({
       </div>
       </div>
 
-      {/* 닫기 버튼 — 사이드바 열렸을 때만 */}
-      {sidebarOpen && (
-        <button
-          onClick={() => setSidebarOpen(false)}
-          title="사이드바 접기"
-          style={{
-            width: "100%",
-            height: "40px",
-            background: "rgba(255,255,255,0.03)",
-            border: "none",
-            borderTop: "1px solid rgba(255,255,255,0.06)",
-            cursor: "pointer",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            color: "#666",
-            transition: "all 0.2s",
-            flexShrink: 0,
-          }}
+      {/* 하단 토글 버튼 — 항상 표시 */}
+      <button
+        onClick={() => setSidebarOpen(o => !o)}
+        title={sidebarOpen ? "사이드바 접기" : "사이드바 펼치기"}
+        style={{
+          width: "100%",
+          height: "40px",
+          background: "rgba(255,255,255,0.03)",
+          border: "none",
+          borderTop: "1px solid rgba(255,255,255,0.06)",
+          cursor: "pointer",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: sidebarOpen ? "center" : "center",
+          gap: "4px",
+          color: "#a78bfa",
+          transition: "all 0.2s",
+          flexShrink: 0,
+        }}
+      >
+        <svg
+          width="18" height="18" viewBox="0 0 24 24"
+          fill="none" stroke="currentColor" strokeWidth="2"
+          strokeLinecap="round" strokeLinejoin="round"
+          style={{ transform: sidebarOpen ? "rotate(0deg)" : "rotate(180deg)", transition: "transform 0.3s" }}
         >
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-            <polyline points="9 18 15 12 9 6"></polyline>
-          </svg>
-          <span style={{ fontSize: "11px", marginLeft: "4px", color: "#666" }}>접기</span>
-        </button>
-      )}
+          <polyline points="9 18 15 12 9 6"></polyline>
+        </svg>
+        {sidebarOpen && (
+          <span style={{ fontSize: "11px", color: "#888" }}>접기</span>
+        )}
+      </button>
     </div>
   );
 }

@@ -27,15 +27,8 @@ export function filterForTTS(text) {
     const t = line.trim();
     if (!t) continue;
 
-    // 📢 발음 줄 — 콜론 있으면 뒤 텍스트, 없으면 📢 제거 후 전체 사용
-    if (t.startsWith("📢")) {
-      const colonIdx = t.indexOf(":");
-      const pron = colonIdx !== -1
-        ? t.slice(colonIdx + 1).trim()
-        : t.replace(/^📢\s*/, "").trim();
-      if (pron) result.push(cleanForTTS(pron));
-      continue;
-    }
+    // 📢 발음 줄 — 모든 언어에서 제거 (한국어 발음을 TTS로 읽으면 엉망)
+    if (t.startsWith("📢")) continue;
 
     // 💬 한국어 해석 줄 제거
     if (t.startsWith("💬")) continue;
@@ -44,13 +37,13 @@ export function filterForTTS(text) {
     if (t.startsWith("📖")) continue;
     if (t.startsWith("•") || t.startsWith("-")) continue;
 
-    // 한글 비율 70% 초과 줄만 제거 (발음 표기 한글은 살림)
+    // 한글 비율 40% 초과 줄 제거 (한국어 번역/설명 줄 걸러냄)
     const hangulCount = (t.match(/[가-힯]/g) || []).length;
     const totalLen = t.replace(/\s/g, "").length;
-    if (totalLen > 0 && hangulCount / totalLen > 0.7) continue;
+    if (totalLen > 0 && hangulCount / totalLen > 0.4) continue;
 
-    // A: / B: 화자 레이블 제거 후 대사만 추출
-    const speakerMatch = t.match(/^[A-Za-z가-힯]{1,2}:\s*(.+)$/);
+    // A: / B: 화자 레이블 제거 후 원문 대사만 추출
+    const speakerMatch = t.match(/^[A-Za-z]{1,2}:\s*(.+)$/);
     if (speakerMatch) {
       result.push(cleanForTTS(speakerMatch[1].trim()));
       continue;
@@ -63,14 +56,21 @@ export function filterForTTS(text) {
 }
 
 export function splitSentences(text) {
-  const cleaned = filterForTTS(text);
-  // 이모지 제거 (올바른 유니코드 범위)
-  const noEmoji = cleaned.replace(/[\u{1F000}-\u{1FFFF}\u{2600}-\u{27FF}]/gu, " ");
-  // 문장 부호 기준 분리 (일본어/중국어 포함)
-  return noEmoji
-    .split(/(?<=[.!?。！？‼⁉])\s*/)
+  const filtered = filterForTTS(text);
+  if (!filtered.trim()) return [];
+
+  // 이모지 제거
+  const noEmoji = filtered.replace(/[\u{1F000}-\u{1FFFF}\u{2600}-\u{27FF}\u{2300}-\u{23FF}]/gu, "").trim();
+
+  // 문장 단위 분리: 마침표/느낌표/물음표 (일본어·중국어 포함) 기준
+  // lookbehind로 구두점 뒤 분리, 공백 없어도 분리
+  const sentences = noEmoji
+    .replace(/([.!?。！？‼⁉]+)\s*/g, "$1\n")
+    .split("\n")
     .map(s => s.trim())
     .filter(s => s.length > 1);
+
+  return sentences.length > 0 ? sentences : [noEmoji.trim()].filter(s => s.length > 1);
 }
 
 export function getWelcomeMessage(l) {
