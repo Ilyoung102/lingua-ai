@@ -2,6 +2,8 @@
 
 AI 기반 다국어 학습 튜터 (일본어·중국어·스페인어 등 7개 언어)
 
+> 업데이트: 불러오기 기능 추가됨
+
 ## 지원 AI
 - 🟠 Claude (Anthropic) — 키 없이도 Claude.ai 내장 API로 동작
 - 🟢 ChatGPT (OpenAI)
