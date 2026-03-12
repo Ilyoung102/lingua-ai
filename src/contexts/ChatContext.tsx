@@ -1,6 +1,8 @@
 import { createContext, useContext, useState, useCallback, ReactNode } from "react";
 import { ChatMessage, Feedback, Stats, JournalEntry, ChatContextType } from "../types";
 import { useSettings } from "./SettingsContext";
+import { useLanguage } from "./LanguageContext";
+import { buildScenarioPrompt } from "../utils";
 
 const ChatContext = createContext<ChatContextType | undefined>(undefined);
 
@@ -10,6 +12,7 @@ interface ChatProviderProps {
 
 export function ChatProvider({ children }: ChatProviderProps) {
   const { apiKeys, aiProvider, aiModels } = useSettings();
+  const { lang, level, mode } = useLanguage();
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [input, setInput] = useState<string>("");
   const [loading, setLoading] = useState<boolean>(false);
@@ -183,8 +186,27 @@ export function ChatProvider({ children }: ChatProviderProps) {
         content: m.text,
       }));
 
-      // Generate feedback prompt for better quality
-      const systemPrompt = `You are a helpful language tutor. Provide feedback on grammar and vocabulary if needed, and respond naturally to the user.`;
+      // Generate language-specific system prompt
+      const systemPrompt = mode === "casual" 
+        ? `You are a friendly ${lang.name} tutor for a ${level} learner. 
+           Chat naturally and primarily in ${lang.nativeName}.
+           
+           CRITICAL RULE: Always write the ${lang.nativeName} response FIRST.
+           Then, provide a 💬 Korean translation on a new line.
+           
+           Format:
+           [Response in ${lang.nativeName}]
+           💬 [Korean Translation]`
+        : `You are a professional ${lang.name} language tutor. Current level: ${level}.
+           Provide a structured lesson response.
+           
+           CRITICAL RULE: Follow this EXACT 4-line format for EVERY response:
+           1. [Response in ${lang.nativeName}]
+           2. 📢 [Pronunciation in Korean alphabet]
+           3. 💬 [Natural Korean Translation]
+           4. 📌 [Brief Grammar/Vocab tip in Korean]
+           
+           Always put ${lang.nativeName} on the first line. Never start with Korean.`;
       
       const responseText = await callAI(systemPrompt, history, textToSend);
 
@@ -201,10 +223,9 @@ export function ChatProvider({ children }: ChatProviderProps) {
       console.error("Failed to send message:", error);
       alert(`Error: ${error.message}`);
     } finally {
-      setLoading(true); // Wait, should be false
       setLoading(false);
     }
-  }, [input, loading, messages, callAI, updateStats, stats.messages]);
+  }, [input, loading, messages, callAI, updateStats, stats.messages, lang, level, mode]);
 
   const sendScenario = useCallback(async (sit: any) => {
     if (loading) return;
@@ -223,9 +244,7 @@ export function ChatProvider({ children }: ChatProviderProps) {
     setMessages((prev) => [...prev, scenarioMsg]);
 
     try {
-      // Note: We need language and level here. In a better design, we'd get them from context.
-      // For now, we'll assume they are provided or we might need to adjust the hook to depend on them.
-      const systemPrompt = `Create a dialogue for the scenario: ${sit.label}. Follow the learning patterns.`;
+      const systemPrompt = buildScenarioPrompt(sit, lang, level);
       const responseText = await callAI(systemPrompt, [], `Start scenario: ${sit.label}`);
 
       const assistantMsg: ChatMessage = {
@@ -242,7 +261,7 @@ export function ChatProvider({ children }: ChatProviderProps) {
     } finally {
       setLoading(false);
     }
-  }, [loading, callAI]);
+  }, [loading, callAI, lang, level]);
 
 
   const value: ChatContextType = {

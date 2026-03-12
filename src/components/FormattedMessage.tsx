@@ -1,6 +1,12 @@
-export function FormattedMessage({ text }) {
+import React from "react";
+
+interface FormattedMessageProps {
+  text: string;
+}
+
+export function FormattedMessage({ text }: FormattedMessageProps) {
   // **bold** → <strong> 렌더링
-  function renderText(str) {
+  function renderText(str: string) {
     const parts = str.split(/(\*\*[^*]+\*\*)/g);
     return parts.map((p, idx) => {
       if (p.startsWith("**") && p.endsWith("**")) {

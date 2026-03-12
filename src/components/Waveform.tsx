@@ -1,4 +1,8 @@
-export function Waveform({ color = "#f472b6" }) {
+interface WaveformProps {
+  color?: string;
+}
+
+export function Waveform({ color = "#f472b6" }: WaveformProps) {
   return (
     <span style={{ display: "inline-flex", alignItems: "center", gap: "2px", height: "14px" }}>
       {[1, 2, 3, 4, 3].map((h, i) => (

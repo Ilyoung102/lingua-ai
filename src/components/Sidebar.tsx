@@ -1,5 +1,5 @@
 import { useState, useRef } from "react";
-import { SITUATIONS, LEVEL_COLORS } from "../constants";
+import { SITUATIONS, LEVEL_COLORS, LEVELS } from "../constants";
 import { hexToRgb } from "../utils";
 import { Conversation } from "../types";
 import { useLanguage, useUI, useChat, useGoals, useConversation } from "../contexts";
@@ -21,9 +21,9 @@ export function Sidebar({
     const { sidebarOpen, setSidebarOpen } = useUI();
     const { loading, sendScenario, feedback, stats } = useChat();
     const { goals, toggleGoal, deleteGoal, saveEditGoal, addGoal, newGoal, setNewGoal, editingGoal, setEditingGoal } = useGoals();
-    const { convList, setConvList } = useConversation();
-    const levelIdx = lang ? 0 : 0; // Simplified for now
-    const levelProgress = 50; // Simplified for now
+    const { convList } = useConversation();
+    const levelIdx = LEVELS.indexOf(level);
+    const levelProgress = (levelIdx / (LEVELS.length - 1)) * 100;
     const [activeTab, setActiveTab] = useState("history");
     const [showConvDelete, setShowConvDelete] = useState<number | null>(null);
     const fileInputRef = useRef<HTMLInputElement>(null);
@@ -491,7 +491,7 @@ export function Sidebar({
 
             {/* 하단 토글 버튼 */}
             <button
-                onClick={() => setSidebarOpen(o => !o)}
+                onClick={() => setSidebarOpen(!sidebarOpen)}
                 title={sidebarOpen ? "사이드바 접기" : "사이드바 펼치기"}
                 style={{
                     width: "100%", height: "40px",

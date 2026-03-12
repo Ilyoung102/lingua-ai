@@ -6,7 +6,7 @@ import { useSettings, useUI } from "../contexts";
 export function SettingsModal() {
   const { aiProvider, setAiProvider, aiModels, setAiModels, apiKeys, setApiKeys } = useSettings();
   const { setShowSettings } = useUI();
-  const [showKeys, setShowKeys] = useState({ claude: false, openai: false, gemini: false });
+  const [showKeys, setShowKeys] = useState<Record<string, boolean>>({ claude: false, openai: false, gemini: false });
 
   return (
     <div
